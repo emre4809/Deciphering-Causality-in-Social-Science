@@ -30,9 +30,9 @@ start_time = time.time()
 
 # directories
 folders = [
-    "data/BEP_2024_datasets/Coda_PDF",
-    "data/BEP_2024_datasets/Xavier_PDF",
-    "data/BEP_2024_datasets/ThirdDataset_PDF"
+    "data/Coda_PDF",
+    "data/Xavier_PDF",
+    "data/ThirdDataset_PDF"
 ]
 
 # loop through all folders and extract text from each PDF
