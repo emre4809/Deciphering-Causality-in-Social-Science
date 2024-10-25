@@ -41,7 +41,7 @@ def split_into_sentences(text):
     return [sent.text for sent in doc.sents]
 
 
-# Preprocessing function to clean and normalize sentences
+# Preprocessing function (updated to handle a list of sentences)
 def preprocess_text(sentences):
     """
     Applies preprocessing steps to clean and normalize a list of sentences.
@@ -49,21 +49,48 @@ def preprocess_text(sentences):
     preprocessed_sentences = []
 
     for sentence in sentences:
+
+        #Step 1: Remove control characters
         sentence = re.sub(r'[\n\t\003]', ' ', sentence)
-        
+
+        #Step 2: English language detection
         try:
             if detect(sentence) != 'en':
                 continue
         except LangDetectException:
             continue
 
+        #Step 3: Replace ligatures using Unicode normalization
         sentence = unicodedata.normalize('NFKD', sentence)
-        sentence = sentence.replace(' ', '')  # partially fix split lettered words
-        sentence = ' '.join(wordninja.split(sentence))
+
+        #Step 4: Using wordninja to split words with more than 15 characters
+        words = sentence.split() #tokenize sentence into words
+
+        processed_words = []
+        for word in words:
+            if len(word) > 15:  #if a word is longer than 15 characters, split it using wordninja
+                processed_words.extend(wordninja.split(word))
+            else:
+                processed_words.append(word)
+
+        sentence = ' '.join(processed_words) #join the sentence with fixed list of words
+
+        #Step 5: Fix words that are split across lines due to hyphens
+        sentence = re.sub(r'(\w+)-\s+(\w+)', r'\1\2', sentence)
+
+        #Step 6: Ignore sentences with 6 or more consecutive split letters
+        if re.search(r'(\b\w\s){6,}', sentence):
+          continue
+
+        #Step 7: Remove extra spaces
         sentence = re.sub(r'\s+', ' ', sentence).strip()
 
-        if len(sentence) >= 30:
-            preprocessed_sentences.append(sentence)
+        #Step 8: Discard sentences with fewer than 30 characters
+        if len(sentence) < 30:
+            continue
+
+        # Add the valid preprocessed sentence to the list
+        preprocessed_sentences.append(sentence)
 
     return preprocessed_sentences
 
