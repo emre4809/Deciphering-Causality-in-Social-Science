@@ -1,3 +1,7 @@
+# ---------------------- Defined functions ---------------------- #
+
+
+# IMPORTS
 import os
 import spacy
 import re
@@ -9,17 +13,18 @@ import unicodedata
 from langdetect import detect, LangDetectException
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-# Load the SpaCy model
+# loading spaCy model (runs on CPU)
 nlp = spacy.load("en_core_web_sm")
 
-# Load BERT-based tokenizer and model for causality detection
+# BERT-based tokenizer and model for causality detection
 tokenizer = AutoTokenizer.from_pretrained("rasoultilburg/ssc_bert")
 model = AutoModelForSequenceClassification.from_pretrained("rasoultilburg/ssc_bert")
+
+# uses cuda if it is available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 
-# Function to extract text from PDF
 def extract_pdf_text(pdf_path):
     """
     Extracts text from a PDF file using PyMuPDF.
@@ -32,16 +37,16 @@ def extract_pdf_text(pdf_path):
     return ''.join(text_list)
 
 
-# Function to split text into sentences using SpaCy
+
 def split_into_sentences(text):
     """
-    Splits the provided text into individual sentences using SpaCy.
+    Splits the provided text into individual sentences using spaCy.
     """
     doc = nlp(text)
     return [sent.text for sent in doc.sents]
 
 
-# Preprocessing function (updated to handle a list of sentences)
+
 def preprocess_text(sentences):
     """
     Applies preprocessing steps to clean and normalize a list of sentences.
@@ -89,13 +94,13 @@ def preprocess_text(sentences):
         if len(sentence) < 30:
             continue
 
-        # Add the valid preprocessed sentence to the list
+        #Step 9: Add the valid preprocessed sentence to the list
         preprocessed_sentences.append(sentence)
 
     return preprocessed_sentences
 
 
-# Function to evaluate causality in sentences using BERT
+
 def evaluate_causality(sentences):
     """
     Evaluates each sentence for causality in larger batches and returns causal sentences.
@@ -105,6 +110,7 @@ def evaluate_causality(sentences):
 
     for i in range(0, len(sentences), batch_size):
         batch = sentences[i:i + batch_size]
+        
         tokens = tokenizer(batch, padding=True, truncation=True, max_length=512, return_tensors="pt").to(device)
 
         with torch.no_grad(), torch.amp.autocast(device_type='cuda'):
@@ -125,19 +131,19 @@ def process_dataset_pipeline(dataset_id, pdf_path, output_csv):
     """
     document_id = os.path.basename(pdf_path)
 
-    # Step 1: Extract text from the PDF
+    #Step 1: Extract text from the PDF
     text = extract_pdf_text(pdf_path)
 
-    # Step 2: Split text into sentences
+    #Step 2: Split text into sentences
     sentences = split_into_sentences(text)
 
-    # Step 3: Preprocess sentences
+    #Step 3: Preprocess sentences
     preprocessed_sentences = preprocess_text(sentences)
 
-    # Step 4: Detect causal sentences
+    #Step 4: Detect causal sentences
     causal_sentences = evaluate_causality(preprocessed_sentences)
 
-    # Step 5: Write causal sentences to a CSV file
+    #Step 5: Write causal sentences to a CSV file
     with open(output_csv, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(["dataset_id", "document_id", "causal_sentence"])
