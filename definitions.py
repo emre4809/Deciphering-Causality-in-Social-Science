@@ -106,7 +106,7 @@ def evaluate_causality(sentences):
     Evaluates each sentence for causality in larger batches and returns causal sentences.
     """
     causal_sentences = []
-    batch_size = 128
+    batch_size = 8
 
     for i in range(0, len(sentences), batch_size):
         batch = sentences[i:i + batch_size]
@@ -114,6 +114,7 @@ def evaluate_causality(sentences):
         tokens = tokenizer(batch, padding=True, truncation=True, max_length=512, return_tensors="pt").to(device)
 
         with torch.no_grad(), torch.amp.autocast(device_type='cuda'):
+            model.eval()
             outputs = model(**tokens)
             logits = outputs.logits
             predictions = torch.argmax(logits, dim=1).cpu().numpy()
