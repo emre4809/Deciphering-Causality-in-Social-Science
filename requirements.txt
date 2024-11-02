@@ -1,10 +1,15 @@
-pymupdf == 1.24.10
-spacy == 3.7.5
-wordninja == 2.0.0
-langdetect == 1.0.9
-transformers == 4.45.1
-torch == 2.5.0
-en-core-web-sm == 3.7.1 # python -m spacy download en_core_web_sm
+pymupdf==1.24.2
+spacy==3.5.3
+wordninja==2.0.0
+langdetect==1.0.9
+transformers==4.25.1
+torch==1.13.1
+unicodedata2==15.0.0
 
-#can use conda or pip to install cuda, change version to your own version (mine is 12.1)
-# conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia  
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0-py3-none-any.whl
+
+numpy==1.24.3
+thinc==8.1.10
+
+tqdm==4.66.1
+requests==2.31.0
