@@ -1,4 +1,4 @@
-# Deciphering-Causality-in-Social-Science
+# Exploring Clustering of Causes and Effects in  Unstructured Social Science Text Using HDBSCAN and BERTopic
 
 This branch represents the technical work done for my (Emre) Bachelor Thesis. It combines the preprocessing code that is in main with my work done on clustering causes and effects. Below are instructions on how the files should be executed.
 
