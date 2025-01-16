@@ -14,7 +14,6 @@ nlp = pipeline(
     model=model,
     tokenizer=tokenizer,
     aggregation_strategy="simple",
-    # device=0  #Uncomment this line if you have a GPU
 )
 
 #Taken directly from model's huggingface page. Label 0 and 1 are not used, I-C: inner cause, I-E: inner effect
