@@ -1,1 +1,1 @@
-
+This folder is used to contain the .csv files used in the project. The data is obtained from the project supervisor and not publicly provided on this repository. The data is composed of three folders named "Coda_PDF", "Xavier_PDF", and "ThirdDataset_PDF", the folders contain pdf files of social science literature. More information about the data can be found in the thesis.
